@@ -3,11 +3,15 @@ const request = require('supertest')
 const app = require('../app')
 
 describe('GET/apps',()=>{
+  let genreArray= ['Action', 'Puzzle', 'Strategy', 'Casual', 'Arcade', 'Card'].map(genre=> genre.toLowerCase())
+
+  
+  
 
   it('should return an array of apps',()=>{
     return request(app)
     .get('/apps')
-    .query({genre:"action"})
+    
     .expect('Content-Type',/json/)
     .expect(200)
     
@@ -35,4 +39,17 @@ describe('GET/apps',()=>{
     })
   })
 
+  it('should be 400 if sort is incorrect',()=>{
+    return request(app)
+    .get('/apps')
+    .query({sort:'MISTAKE'})
+    .expect(400,'Sort must be one of title or rank')
+  })
+
+  it('should be 400 if genre is incorrect',()=>{
+    return request(app)
+    .get('/apps')
+    .query({genre:'MISTAKE'})
+    .expect(400,`Sort must be one of followings\n ${genreArray.join(' or ')}`)
+  })
 })
